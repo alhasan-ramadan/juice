@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <!-- Kleiner Fußabdruck: kein Hintergrund-GC-Thread, keine ICU-Sprachdaten. -->
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <AssemblyName>Juice</AssemblyName>
+    <RootNamespace>Juice</RootNamespace>
+    <Version>0.2.0</Version>
+    <Product>JUICE</Product>
+    <Description>JUICE – Just a Unified Indicator for Charge &amp; Energy. Akkustand kabelloser Geräte in der Taskleiste.</Description>
+  </PropertyGroup>
+
+</Project>

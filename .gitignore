@@ -1,0 +1,10 @@
+/bin/
+/obj/
+/dist/
+.vs/
+*.user
+
+# Nur lokal: gebaute Firmware, Sicherungen des eigenen Geräts, fremde Werkzeuge
+/firmware/bin/
+/firmware/sicherung/
+/firmware/tools/
