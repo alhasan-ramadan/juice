@@ -36,11 +36,17 @@ sealed class Settings
     }
 }
 
-/// <summary>Autostart über HKCU\...\Run, also nur für den eigenen Benutzer und ohne Admin-Rechte.</summary>
+/// <summary>
+/// Autostart über HKCU\...\Run, also nur für den eigenen Benutzer und ohne Admin-Rechte.
+/// Zusätzlich die Freigabe unter Explorer\StartupApproved\Run, wie sie der Task-Manager setzt:
+/// Neuere Windows-11-Builds starten Run-Einträge ohne diese Freigabe nicht.
+/// </summary>
 static class Autostart
 {
     const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
+    const string ApprovedKey = @"Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run";
     const string ValueName = "Juice";
+    static readonly byte[] Enabled = [0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     static string Command => $"\"{Environment.ProcessPath}\"";
 
@@ -48,18 +54,28 @@ static class Autostart
     {
         get
         {
-            using var key = Registry.CurrentUser.OpenSubKey(RunKey);
-            return key?.GetValue(ValueName) is string value && value == Command;
+            using var run = Registry.CurrentUser.OpenSubKey(RunKey);
+            using var approved = Registry.CurrentUser.OpenSubKey(ApprovedKey);
+            // Ungerades erstes Byte = im Task-Manager deaktiviert.
+            bool disabled = approved?.GetValue(ValueName) is byte[] { Length: > 0 } state && (state[0] & 1) == 1;
+            return run?.GetValue(ValueName) is string value && value == Command && !disabled;
         }
     }
 
     public static void Set(bool enabled)
     {
-        using var key = Registry.CurrentUser.CreateSubKey(RunKey);
+        using var run = Registry.CurrentUser.CreateSubKey(RunKey);
+        using var approved = Registry.CurrentUser.CreateSubKey(ApprovedKey);
         if (enabled)
-            key.SetValue(ValueName, Command);
+        {
+            run.SetValue(ValueName, Command);
+            approved.SetValue(ValueName, Enabled, RegistryValueKind.Binary);
+        }
         else
-            key.DeleteValue(ValueName, throwOnMissingValue: false);
+        {
+            run.DeleteValue(ValueName, throwOnMissingValue: false);
+            approved.DeleteValue(ValueName, throwOnMissingValue: false);
+        }
         Log.Write($"Autostart {(enabled ? "an" : "aus")}: {Command}");
     }
 }
