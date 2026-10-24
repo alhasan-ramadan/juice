@@ -65,7 +65,7 @@ Neue Corsair-Geräte bekommen ihren Namen über die Tabelle `KnownDevices` in `s
 
 Das Tool ist ein normales Programm ohne Fenster: `Juice.exe`. Im Task-Manager steht es unter „Details“ als `Juice.exe`. Unter „Autostart-Apps“ taucht es nicht auf, weil es über die Aufgabenplanung startet; abschalten lässt es sich im eigenen Menü oder in der Aufgabenplanung. Es läuft mit deinen normalen Benutzerrechten, braucht keinen Dienst und keinen Treiber und sendet nichts ins Netz.
 
-Typischer Verbrauch: rund 15 MB eigener Speicher, unter 1 % CPU. Lese-Threads warten blockierend auf Meldungen der Geräte und kosten in der Zeit keine Rechenzeit.
+Typischer Verbrauch: rund 5 MB eigener Speicher (Task-Manager, Spalte „Arbeitsspeicher“), unter 1 % CPU. Dazu kommen Bibliotheken von Windows und .NET, die sich alle Programme teilen. Lese-Threads warten blockierend auf Meldungen der Geräte und kosten in der Zeit keine Rechenzeit.
 
 ## Entfernen
 
