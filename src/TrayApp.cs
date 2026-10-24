@@ -50,6 +50,10 @@ sealed class TrayApp : ApplicationContext
             settings.FirstRunDone = true;
             settings.Save();
         }
+        else
+        {
+            Autostart.MigrateFromRunKey();
+        }
 
         menu.Opening += (_, _) => BuildMenu();
 

@@ -59,11 +59,11 @@ Neue Corsair-Geräte bekommen ihren Namen über die Tabelle `KnownDevices` in `s
   - `corsair-geraete.json`: welches Corsair-Gerät auf welchem Empfänger-Platz sitzt (für den Namen)
   - `keychron-akku.json`: letzter Akku-Code der Keychron
   - `juice.log`: Protokoll, begrenzt auf 256 KB
-- Autostart: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, Wert `Juice`
+- Autostart: Aufgabe `Juice` in der Aufgabenplanung („Bei Anmeldung“, nur dein Benutzer, normale Rechte). Der Run-Schlüssel in der Registry wäre der übliche Weg, aber Windows 11 Build 26300 hat den Eintrag dort beim Anmelden einfach übersprungen. Ein alter Run-Eintrag von Version 0.2 wird beim Start entfernt.
 
 ## Im Hintergrund
 
-Das Tool ist ein normales Programm ohne Fenster: `Juice.exe`. Im Task-Manager steht es unter „Details“ als `Juice.exe`, unter „Autostart-Apps“ als „Juice“ (dort auch abschaltbar). Es läuft mit deinen normalen Benutzerrechten, braucht keinen Dienst und keinen Treiber und sendet nichts ins Netz.
+Das Tool ist ein normales Programm ohne Fenster: `Juice.exe`. Im Task-Manager steht es unter „Details“ als `Juice.exe`. Unter „Autostart-Apps“ taucht es nicht auf, weil es über die Aufgabenplanung startet; abschalten lässt es sich im eigenen Menü oder in der Aufgabenplanung. Es läuft mit deinen normalen Benutzerrechten, braucht keinen Dienst und keinen Treiber und sendet nichts ins Netz.
 
 Typischer Verbrauch: rund 15 MB eigener Speicher, unter 1 % CPU. Lese-Threads warten blockierend auf Meldungen der Geräte und kosten in der Zeit keine Rechenzeit.
 
