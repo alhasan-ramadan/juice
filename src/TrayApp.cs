@@ -265,13 +265,15 @@ sealed class TrayApp : ApplicationContext
         return $"{reading.Name}\n{reading.Percent} %{state}{remaining}\n{status}";
     }
 
-    /// <summary>Geschätzte Restlaufzeit bei laufendem PC; nur beim Entladen und mit genug Verlauf.</summary>
+    /// <summary>Geschätzte Restlaufzeit bei laufendem PC; nur beim Entladen. Bis genug Verlauf da ist, sagt sie das.</summary>
     string? RemainingText(Slot slot)
     {
         var reading = slot.Reading;
         if (reading.Percent is not int percent || reading.State is ChargeState.Charging or ChargeState.Full)
             return null;
-        return history.Remaining(reading.Id, percent) is { } remaining ? BatteryHistory.Describe(remaining) : null;
+        return history.Remaining(reading.Id, percent) is { } remaining
+            ? BatteryHistory.Describe(remaining)
+            : "Restlaufzeit wird noch gemessen";
     }
 
     void UpdatePlaceholder()

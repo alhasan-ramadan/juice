@@ -10,9 +10,12 @@ namespace Juice;
 /// </summary>
 sealed class BatteryHistory
 {
-    const int MinDrop = 3;
-    const double MinHours = 0.5;
+    const int MinDrop = 2;
+    const double MinHours = 1;
     const int MaxSamples = 100;
+    // Messwerte wackeln um einen Prozentpunkt (die M75 springt etwa zwischen 42 und 43 %). Erst ein Sprung
+    // um so viele Punkte nach oben gilt als Aufladen und beginnt die Messung neu.
+    const int ChargeJump = 5;
     // Längere Pausen zwischen zwei Ticks (PC aus, Ruhezustand) zählen nicht als Laufzeit.
     static readonly TimeSpan MaxTickGap = TimeSpan.FromMinutes(10);
     static readonly string FilePath = Path.Combine(Settings.Folder, "verlauf.json");
@@ -53,7 +56,10 @@ sealed class BatteryHistory
         dirty |= hours - savedHours >= 0.25;
     }
 
-    /// <summary>Nimmt einen Messwert auf. Laden oder ein höherer Wert als zuletzt beginnt den Verlauf neu.</summary>
+    /// <summary>
+    /// Nimmt einen Messwert auf; gespeichert wird nur ein neuer Tiefstwert. Laden oder ein deutlich höherer
+    /// Wert als zuletzt beginnt den Verlauf neu.
+    /// </summary>
     public void Add(string id, int percent, bool charging)
     {
         Tick();
@@ -64,9 +70,9 @@ sealed class BatteryHistory
         }
         if (!devices.TryGetValue(id, out var list))
             devices[id] = list = [];
-        if (list.Count > 0 && percent > list[^1].Percent)
+        if (list.Count > 0 && percent >= list[^1].Percent + ChargeJump)
             list.Clear();
-        if (list.Count > 0 && percent == list[^1].Percent)
+        if (list.Count > 0 && percent >= list[^1].Percent)
             return;
         list.Add(new Sample(hours, percent));
         if (list.Count > MaxSamples)

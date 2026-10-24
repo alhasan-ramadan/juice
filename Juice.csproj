@@ -12,7 +12,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <AssemblyName>Juice</AssemblyName>
     <RootNamespace>Juice</RootNamespace>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <Product>JUICE</Product>
     <Description>JUICE – Just a Unified Indicator for Charge &amp; Energy. Akkustand kabelloser Geräte in der Taskleiste.</Description>
   </PropertyGroup>

@@ -30,7 +30,7 @@ Neue Symbole legt Windows zuerst in den Überlauf (^ neben der Uhr). Damit sie i
 | graue Zahl | veraltet: pausiert oder Gerät nicht verbunden |
 
 - Maus über das Symbol: Gerät, Zustand, geschätzte Restlaufzeit und Uhrzeit der letzten Messung.
-- Restlaufzeit: geschätzt aus dem bisherigen Verlauf, sobald ein Gerät 3 Prozentpunkte über mindestens eine halbe Stunde verloren hat. Gezählt wird nur Zeit, in der der PC läuft; Laden beginnt die Messung neu. Die Schätzung wertet nur ohnehin gemessene Werte aus und kostet keine zusätzliche Abfrage.
+- Restlaufzeit: geschätzt aus dem bisherigen Verlauf, sobald ein Gerät 2 Prozentpunkte über mindestens eine Stunde verloren hat; bis dahin steht dort „Restlaufzeit wird noch gemessen“. Gezählt wird nur Zeit, in der der PC läuft. Kleines Wackeln um einen Punkt nach oben wird ignoriert, erst Laden (oder 5 Punkte mehr) beginnt die Messung neu. Die Schätzung wertet nur ohnehin gemessene Werte aus und kostet keine zusätzliche Abfrage.
 - Linksklick: sofort aktualisieren.
 - Rechtsklick: Menü mit allen Geräten. Ein Klick auf ein Gerät blendet sein Symbol ein oder aus. Außerdem „Jetzt aktualisieren“, „Mit Windows starten“ und „Beenden“.
 - Das Tool aktualisiert alle 2 Minuten. Bei 20 % und bei 10 % kommt je einmal ein Windows-Hinweis. Nach dem Aufladen ist die Warnung wieder scharf.
