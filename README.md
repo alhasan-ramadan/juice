@@ -29,7 +29,8 @@ Neue Symbole legt Windows zuerst in den Überlauf (^ neben der Uhr). Damit sie i
 | grüne Zahl mit Balken | lädt oder voll |
 | graue Zahl | veraltet: pausiert oder Gerät nicht verbunden |
 
-- Maus über das Symbol: Gerät, Zustand und Uhrzeit der letzten Messung.
+- Maus über das Symbol: Gerät, Zustand, geschätzte Restlaufzeit und Uhrzeit der letzten Messung.
+- Restlaufzeit: geschätzt aus dem bisherigen Verlauf, sobald ein Gerät 3 Prozentpunkte über mindestens eine halbe Stunde verloren hat. Gezählt wird nur Zeit, in der der PC läuft; Laden beginnt die Messung neu. Die Schätzung wertet nur ohnehin gemessene Werte aus und kostet keine zusätzliche Abfrage.
 - Linksklick: sofort aktualisieren.
 - Rechtsklick: Menü mit allen Geräten. Ein Klick auf ein Gerät blendet sein Symbol ein oder aus. Außerdem „Jetzt aktualisieren“, „Mit Windows starten“ und „Beenden“.
 - Das Tool aktualisiert alle 2 Minuten. Bei 20 % und bei 10 % kommt je einmal ein Windows-Hinweis. Nach dem Aufladen ist die Warnung wieder scharf.
@@ -58,6 +59,7 @@ Neue Corsair-Geräte bekommen ihren Namen über die Tabelle `KnownDevices` in `s
   - `letzte-werte.json`: letzter Stand jedes Geräts, damit es nach einem Neustart gleich (grau) da ist
   - `corsair-geraete.json`: welches Corsair-Gerät auf welchem Empfänger-Platz sitzt (für den Namen)
   - `keychron-akku.json`: letzter Akku-Code der Keychron
+  - `verlauf.json`: Akkustände und Laufzeit für die Restlaufzeit, höchstens 100 Werte pro Gerät
   - `juice.log`: Protokoll, begrenzt auf 256 KB
 - Autostart: Aufgabe `Juice` in der Aufgabenplanung („Bei Anmeldung“, nur dein Benutzer, normale Rechte). Der Run-Schlüssel in der Registry wäre der übliche Weg, aber Windows 11 Build 26300 hat den Eintrag dort beim Anmelden einfach übersprungen. Ein alter Run-Eintrag von Version 0.2 wird beim Start entfernt.
 

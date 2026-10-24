@@ -15,6 +15,7 @@ sealed class TrayApp : ApplicationContext
     static readonly TimeSpan Interval = TimeSpan.FromMinutes(2);
 
     readonly Settings settings = Settings.Load();
+    readonly BatteryHistory history = BatteryHistory.Load();
     readonly ContextMenuStrip menu = new();
     readonly System.Windows.Forms.Timer timer = new() { Interval = (int)Interval.TotalMilliseconds };
     readonly System.Windows.Forms.Timer listenerTimer = new() { Interval = 15_000 };
@@ -65,7 +66,11 @@ sealed class TrayApp : ApplicationContext
 
         SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
 
-        timer.Tick += async (_, _) => await RefreshAsync();
+        timer.Tick += async (_, _) =>
+        {
+            history.Tick();
+            await RefreshAsync();
+        };
         timer.Start();
 
         // Keychron und Corsair melden sich von selbst: neue Werte sofort anzeigen und
@@ -164,8 +169,10 @@ sealed class TrayApp : ApplicationContext
             slot.Reading = reading;
             slot.Updated = reading.MeasuredAt ?? DateTime.Now;
             slot.StaleNote = null;
+            history.Add(reading.Id, reading.Percent.Value, reading.State is ChargeState.Charging or ChargeState.Full);
             CheckWarnings(slot);
         }
+        history.Save();
 
         foreach (var (id, slot) in slots)
         {
@@ -247,14 +254,24 @@ sealed class TrayApp : ApplicationContext
         }
     }
 
-    static string Describe(Slot slot)
+    string Describe(Slot slot)
     {
         var reading = slot.Reading;
         string state = reading.StateText.Length > 0 ? $", {reading.StateText}" : "";
+        string remaining = RemainingText(slot) is { } text ? $"\n{text}" : "";
         string status = slot.StaleNote is null
             ? $"Stand {slot.Updated:HH:mm}"
             : $"{slot.StaleNote}, zuletzt {slot.Updated:HH:mm}";
-        return $"{reading.Name}\n{reading.Percent} %{state}\n{status}";
+        return $"{reading.Name}\n{reading.Percent} %{state}{remaining}\n{status}";
+    }
+
+    /// <summary>Geschätzte Restlaufzeit bei laufendem PC; nur beim Entladen und mit genug Verlauf.</summary>
+    string? RemainingText(Slot slot)
+    {
+        var reading = slot.Reading;
+        if (reading.Percent is not int percent || reading.State is ChargeState.Charging or ChargeState.Full)
+            return null;
+        return history.Remaining(reading.Id, percent) is { } remaining ? BatteryHistory.Describe(remaining) : null;
     }
 
     void UpdatePlaceholder()
@@ -313,7 +330,8 @@ sealed class TrayApp : ApplicationContext
             var reading = slot.Reading;
             string state = reading.StateText.Length > 0 ? $" ({reading.StateText})" : "";
             string note = slot.StaleNote is null ? "" : $", {slot.StaleNote}";
-            var item = new ToolStripMenuItem($"{reading.Name}: {reading.Percent} %{state}{note}")
+            string remaining = RemainingText(slot) is { } text ? $", {text}" : "";
+            var item = new ToolStripMenuItem($"{reading.Name}: {reading.Percent} %{state}{remaining}{note}")
             {
                 Checked = !settings.Hidden.Contains(reading.Id),
                 ToolTipText = "Symbol in der Taskleiste ein- oder ausblenden",
@@ -361,6 +379,8 @@ sealed class TrayApp : ApplicationContext
     {
         timer.Stop();
         listenerTimer.Stop();
+        history.Tick();
+        history.Save();
         SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
         foreach (var slot in slots.Values)
         {
